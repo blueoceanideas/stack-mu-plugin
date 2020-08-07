@@ -30,7 +30,7 @@ class Memcached implements \Stack\ObjectCache
      *
      * @var array
      */
-    public $global_groups = array('users', 'userlogins', 'usermeta', 'site-options', 'site-lookup', 'blog-lookup',
+    public $global_groups = array('site-options', 'site-lookup', 'blog-lookup',
                                   'blog-details', 'rss');
 
     /**
