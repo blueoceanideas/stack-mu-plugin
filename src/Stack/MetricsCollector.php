@@ -83,6 +83,10 @@ class MetricsCollector
     {
         $requestType = $this::getRequestType();
         $requestTime = timer_stop(0, 12);
+
+        // Convert to float
+        $requestTime = (float)str_replace(',', '', $requestTime);
+
         $peakMemory  = memory_get_peak_usage();
 
         $this->metrics->getCounter('wp.requests')->incBy(
