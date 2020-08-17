@@ -115,11 +115,7 @@ class Memcached implements \Stack\ObjectCache
 
         // Assign global and blog prefixes for use with keys
         if (function_exists('is_multisite')) {
-            if (is_multisite() || defined('CUSTOM_USER_TABLE') && defined('CUSTOM_USER_META_TABLE')) {
-                $this->global_prefix = '';
-            } else {
-                $this->global_prefix = $table_prefix;
-            }
+            $this->global_prefix = $table_prefix;
             $this->blog_prefix = ( is_multisite() ? $blog_id : $table_prefix ) . ':';
         }
 
