@@ -6,5 +6,5 @@ if (WP_ENV !== 'development') {
     //new Stack\MediaStorage();
     new Stack\QuerySplit();
     new Stack\NginxHelperActivator();
-    new Stack\MetricsCollector();
+    // new Stack\MetricsCollector();
 }
