@@ -67,10 +67,6 @@ class MediaStorage
 
     public function serveImage()
     {
-        if (!isset($_SERVER['HTTP_HOST'])) {
-            return;
-        }
-
         $upload = wp_upload_dir();
         $request = (is_ssl() ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
         if ($this->startsWith($request, $upload['baseurl'])) {

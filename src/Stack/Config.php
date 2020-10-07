@@ -1,11 +1,6 @@
 <?php
 namespace Stack;
 
-/**
- * Use env() from oscarotero/env
- */
-use function Env\env;
-
 class Config
 {
     public static function loadDefaults()
@@ -15,6 +10,10 @@ class Config
         if ($runCount > 0) {
             return;
         }
+        /*
+         * Expose global env() function from oscarotero/env
+         */
+        \Env::init();
 
         $uploads = wp_upload_dir(null, false, false);
         $homeURL = home_url();
@@ -38,9 +37,10 @@ class Config
         self::defineFromEnv("MEMCACHED_HOST", "");
         self::defineFromEnv("MEMCACHED_DISCOVERY_HOST", "");
 
-        self::defineFromEnv("STACK_PAGE_CACHE_ENABLED", false);
+        self::defineFromEnv("STACK_PAGE_CACHE_ENABLED", true);
         self::defineFromEnv("STACK_PAGE_CACHE_AUTOMATIC_PLUGIN_ON_OFF", true);
         self::defineFromEnv("STACK_PAGE_CACHE_BACKEND", "");
+        self::defineFromEnv("STACK_PAGE_CACHE_MEMCACHED_USE_VERSIONED_KEYS", true);
         self::defineFromEnv("STACK_PAGE_CACHE_KEY_PREFIX", "");
 
         if (STACK_PAGE_CACHE_BACKEND == "redis") {
@@ -52,7 +52,10 @@ class Config
             self::defineFromEnv("RT_WP_NGINX_HELPER_MEMCACHED_PORT", "", "STACK_PAGE_CACHE_MEMCACHED_PORT");
             self::define("RT_WP_NGINX_HELPER_MEMCACHED_PREFIX", STACK_PAGE_CACHE_KEY_PREFIX);
 
-            $versionedCacheKey = STACK_PAGE_CACHE_KEY_PREFIX . "version";
+            $versionedCacheKey = "";
+            if (STACK_PAGE_CACHE_MEMCACHED_USE_VERSIONED_KEYS) {
+                $versionedCacheKey = STACK_PAGE_CACHE_KEY_PREFIX . "version";
+            }
             self::define("RT_WP_NGINX_HELPER_MEMCACHED_VERSIONED_CACHE_KEY", $versionedCacheKey);
         }
 
