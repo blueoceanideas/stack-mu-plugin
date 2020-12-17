@@ -127,10 +127,11 @@ class MetricsCollector
         $base      = 'metrics';
 
         register_rest_route($namespace, '/' . $base, array(
-            array(
-                'methods'  => \WP_REST_Server::READABLE,
-                'callback' => [$this->metrics, 'render']
-            )
+            [
+                'methods' => \WP_REST_Server::READABLE,
+                'callback' => [$this->metrics, 'render'],
+                'permission_callback' => true
+            ]
         ));
     }
 
