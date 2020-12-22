@@ -130,7 +130,7 @@ class MetricsCollector
             [
                 'methods' => \WP_REST_Server::READABLE,
                 'callback' => [$this->metrics, 'render'],
-                'permission_callback' => true
+                'permission_callback' => '__return_true',
             ]
         ));
     }
