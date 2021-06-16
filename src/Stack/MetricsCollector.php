@@ -204,7 +204,7 @@ class MetricsCollector
 
     private function isWoocommerce()
     {
-        return function_exists('is_woocommerce') && is_woocommerce();
+        return class_exists('WooCommerce');
     }
 
     private function canCollectWpdbMetrics()
@@ -228,7 +228,13 @@ class MetricsCollector
         if (defined('DOING_AJAX') && DOING_AJAX) {
             return 'admin-ajax';
         }
-        if ($this::isWoocommerce()) {
+
+        global $wp_query;
+        if (function_exists('is_woocommerce')
+            && $this::isWoocommerce()
+            && $wp_query->get_queried_object()
+            && is_woocommerce()
+        ) {
             if (function_exists('is_shop') && is_shop()) {
                 return 'shop';
             }
