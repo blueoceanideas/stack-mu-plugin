@@ -1,6 +1,8 @@
 <?php
 namespace Stack;
 
+use WP_REST_Response;
+
 class MetricsCollector
 {
     private $registry;
@@ -82,7 +84,7 @@ class MetricsCollector
     public function collectRequestMetrics()
     {
         $requestType = $this::getRequestType();
-        $requestTime = timer_stop(0, 12);
+        $requestTime = $this::getRequestTime();
 
         // Convert to float
         $requestTime = (float)str_replace(',', '', $requestTime);
@@ -133,6 +135,28 @@ class MetricsCollector
                 'permission_callback' => '__return_true',
             ]
         ));
+
+        add_filter('rest_pre_echo_response', [$this, 'preEchoResponse'], 9999, 3);
+    }
+
+    public function preEchoResponse($result, $server, $request)
+    {
+        if ($request->get_route() == "/stack/v" . STACK_REST_API_VERSION . "/metrics" && is_string($result)) {
+            echo $result;
+            return null;
+        }
+
+        return $result;
+    }
+
+    public function render()
+    {
+        $response = new WP_REST_Response($this->metrics->render());
+
+        $response->header('Content-type', \Prometheus\RenderTextFormat::MIME_TYPE);
+        $response->header('Cache-Control', 'no-cache,max-age=0');
+
+        return $response;
     }
 
     public function collectWpdbStats($queryData, $query, $queryTime, $queryCallstack, $queryStart)
@@ -241,5 +265,14 @@ class MetricsCollector
         }
 
         return 'other';
+    }
+
+    private function getRequestTime()
+    {
+        global $timestart, $timeend;
+        $precision = 12;
+        $timeend   = microtime(true);
+        $timetotal = $timeend - $timestart;
+        return number_format($timetotal, $precision);
     }
 }
